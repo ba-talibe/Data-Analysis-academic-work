@@ -1,0 +1,15 @@
+{
+    "Cours":"Analyse et Visualisation de Données",
+    "Enseignant": {
+        "Prenom": "Pierre",
+        "Nom": "Héroux"},
+    "Volume": {
+        "CM":20,
+        "TP":30},
+    "Etudiants": [
+        {"Nom":"Nom 1", "Prenom": "Prenom 1", "Note": 12},
+        {"Nom":"Nom 2", "Prenom": "Prenom 2", "Note": 14},
+        {"Nom":"Nom 3", "Prenom": "Prenom 3", "Note": 11},
+        {"Nom":"Nom 4", "Prenom": "Prenom 4", "Note": 15}
+    ]
+}
