@@ -47,17 +47,18 @@
         }
         
         const increaseRectWith = (obj) => {
-            let rectWidth = parseFloat($(obj).css('width'))
-            $(obj).animate({'width': `${(rectWidth+10)}px`, 'height': `${(rectWidth+10)}`});
+            console.log(obj);
+            // let rectWidth = parseFloat($(obj).css('width'))
+            // $(obj).animate({'width': `${(rectWidth+10)}px`, 'height': `${(rectWidth+10)}`});
         }
 
         const decreaseRectWith = (obj) => {
-            let rectWidth = parseFloat($(obj).css('width'))
-            obj.width 
-            $(obj).animate({'width': `${(rectWidth-10)}px`, 'height': `${(rectWidth-10)}`});
+            console.log(obj)
+            console.log(obj.width)
+
         }
 
-        canvas.selectAll("circle")
+        var cercles = canvas.selectAll("circle")
             .data(typeA)
             .enter()
             .append("circle")
@@ -67,27 +68,55 @@
                 .attr("opacity", (d)=> {d.intensity})
                 .attr("class", function (d) {return d.class})
                 .attr("stroke", "black")
+                .on("mouseover", function(){
+                    d3.select(this)//.classed("highlight", false)
+                        .transition()
+                        .duration(200)
+                        .attr("r", function (d)   {return (d.number*0.10) + 10 })
+                    })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("r", function (d)   {return (d.number*0.10) + 1 })
+                })
+                
 
-        canvas.selectAll("rect")
+        var carres = canvas.selectAll("rect")
             .data(typeB)
             .enter()
             .append("rect")
-                .attr("onmouseover", "increaseRectWith(this)")
-                .attr("onmouseover", "decreaseRectWith(this)")
                 .attr("x", function (d)   {return d.x} )
                 .attr("y", function (d)   {return HEIGHT/2 - d.y} )
                 .attr("width", function (d)   {return (d.number*0.10) + 1 })
                 .attr("height", function (d)   {return (d.number*0.10) + 1 })
                 .attr("class", function (d) {return d.class})
                 .attr("stroke", "black")
+                .on("mouseover", function(){
+                    d3.select(this)//.classed("highlight", false)
+                        .transition()
+                        .duration(200)
+                        .attr("width", function (d)   {return (d.number*0.10) + 10 })
+                        .attr("height", function (d)   {return (d.number*0.10) + 10 })
+                    })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("width", function (d)   {return (d.number*0.10) + 1 })
+                        .attr("height", function (d)   {return (d.number*0.10) + 1 });
+                })
+        
+    
+                
         
         
         canvas.selectAll("text")
             .data(data)
             .enter()
             .append("text")
-                .attr("x", function (d)   {return d.x + 25} )
-                .attr("y", function (d)   {return HEIGHT/2 - d.y} )
+                .attr("x", function (d)  {return d.x + 25} )
+                .attr("y", function (d)  {return HEIGHT/2 - d.y} )
                 .attr("class", function (d) {return d.class})
                 .text(function (d, i) {return d.class})
 
