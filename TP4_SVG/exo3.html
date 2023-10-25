@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXO 2 SVG</title>
+    <title>EXO 3 SVG</title>
     <script src="http://d3js.org/d3.v4.min.js"></script>
 </head>
 <body>
@@ -19,11 +19,12 @@
             {"x": 200, "y": 350, "number": 80, "class":"C3", "intensity":0.4, "i": 6},
             {"x": 350, "y": 100, "number": 200, "class":"C3", "intensity":0.8, "i": 7},
         ];
-
+        const HEIGHT = 500;
+        const WIDTH = 800;
         var canvas = d3.select("body")
             .append("svg")
-            .attr("width", 300)
-            .attr("height", 300);
+            .attr("width", WIDTH)
+            .attr("height", HEIGHT);
 
     //         <rect x="10" y="100"  width="15" height="200" style="fill:blue" />
     // <rect x="25" y="150"  width="15" height="150" style="fill:blue" />
@@ -33,33 +34,46 @@
     // <rect x="85" y="220"  width="15" height="80" style="fill:blue" />
     // <rect x="100" y="100"  width="15" height="200" style="fill:blue" />
 
-        var spacing = 5;
-        var bin_width = 15;
+        var spacing = 10;
+        var bin_width = 20;
 
         canvas.selectAll("rect")
             .data(data)
             .enter()
             .append("rect")
-                .attr("x", function (d)   {return d.i*(bin_width + spacing) + 10} )
-                .attr("y", function (d)   {return 300 - d.number} )
+                .attr("x", function (d, i)   {return (i+1)*(bin_width + spacing) + 15} )
+                .attr("y", function (d)   {return HEIGHT/2 - d.number} )
                 .attr("width", bin_width )
                 .attr("height", function (d)   {return d.number})
-                .attr("fill", (d)=>{
-                        switch (d.class){
-                            case "C1":
-                                return "blue"
-                                break;
-                            case "C2":
-                                return "green"
-                                break;
-                            case "C3":
-                                return "red"
-                                break;
-                        }
-                        
-                })
+                .attr("class", function (d) {return d.class})
                 .attr("stroke", "black")
-               
+        
+        
+        canvas.selectAll("text")
+            .data(data)
+            .enter()
+            .append("text")
+                .attr("x", function (d)   {return d.i*(bin_width + spacing) + 10} )
+                .attr("y", function (d)   {return HEIGHT/2 + 15} )
+                .attr("class", function (d) {return d.class})
+                .text(function (d, i) {return d.class})
     </script>
+    <style>
+        .C1{
+            color: white;
+            fill: blue;
+            
+        }
+        .C2{
+            color: blueviolet;
+            fill: blueviolet;
+        }
+        .C3{
+            color: brown;
+            fill: brown;
+        }
+        
+        
+    </style>
 </body>
 </html>
