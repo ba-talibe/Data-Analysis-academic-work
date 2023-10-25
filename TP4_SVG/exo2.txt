@@ -1,0 +1,3 @@
+Pour Chaque calcule on recalcule les coordonnés selon l'axe d'orientation  du navigateur
+Pour la largeur des batons elle est constante par contre la hauteur est proportionnelle 
+a l'atribut number

@@ -1,0 +1,3 @@
+On utilise la bibliotheque d3js pour tracer les  ficgure svg.
+Pour  les coordonnées on refait le meme calcule que l'exercice 1 sauf qu'ici 
+on l'ecit sous forme de fonction javascript qui prend en parametre la donnée

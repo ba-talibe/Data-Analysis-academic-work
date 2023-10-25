@@ -1,0 +1,2 @@
+On fait la meme chose que dans l'exercice precedant sauf que pour lla coleur les baton 
+on se base sur attribut class des données puis on ajour la coleur dans une balise style avec du class

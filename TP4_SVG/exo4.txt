@@ -1,0 +1,6 @@
+Nous avons filter nos données en fonction de l'attribut type 
+
+Pour les données de type A on les representes avec un cercle dont
+le rayon est proportionnelle a l'attribut number (j'ai atuliser une fonction afine pour cela)
+Pour les donnée de type  B on les reprensente avec un carre dont 
+le coté est a l'atribut number
