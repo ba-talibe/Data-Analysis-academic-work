@@ -46,8 +46,8 @@ if __name__ == '__main__':
     iris = datasets.load_iris()
     RadialVisualization(iris.data,iris.target,iris.target_names,iris.feature_names, "IRIS",r=0.5)
 
-    # wine = datasets.load_wine()
-    # RadialVisualization(wine.data,wine.target,wine.target_names,wine.feature_names, "Wine",r=0.3)
-    # breast_cancer = datasets.load_breast_cancer()
-    # RadialVisualization(breast_cancer.data,breast_cancer.target,breast_cancer.target_names,
-    # breast_cancer.feature_names, "Wine",r=0.5)
+    wine = datasets.load_wine()
+    RadialVisualization(wine.data,wine.target,wine.target_names,wine.feature_names, "Wine",r=0.3)
+    breast_cancer = datasets.load_breast_cancer()
+    RadialVisualization(breast_cancer.data,breast_cancer.target,breast_cancer.target_names,
+    breast_cancer.feature_names, "Wine",r=0.5)
