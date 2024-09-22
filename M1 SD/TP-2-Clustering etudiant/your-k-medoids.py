@@ -29,9 +29,12 @@ def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100):
 
 
     while iteration < Max_iterations:
+        iteration += 1
         print("Iteration :",iteration)
         #################################################################
         #          affectation des données aux médoïde le plus proches
+        for k in range(K):
+            Normes[k,:] = np.linalg.norm(X-C[k,:], axis=1)**2
         r  = np.zeros((N, K))
         
         y = np.argmin(Normes,axis=0)
@@ -39,25 +42,37 @@ def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100):
         
         #################################################################
         # Calcul des meilleurs médoïdes
+   
         for k in range(K):
-            Normes[k,:] = np.linalg.norm(X-C[:,k], axis=1)
+            cluster_points = X[y == k]
+            if len(cluster_points) == 0:
+                continue
+            distances = np.sum(np.linalg.norm(cluster_points[:, np.newaxis] - cluster_points, axis=2), axis=1)
+            medoid_index = np.argmin(distances)
+            C[k,:] = cluster_points[medoid_index]
+    
         
         
-        
-        #################################################################
-        # M Step : calcul des meilleurs centres
-        y = np.argmin(Normes,axis=0)          
-        for n in range(N):
-            r[n,y[n]] = 1
+        # #################################################################
+        # # M Step : calcul des meilleurs centres
+        # y = np.argmin(Normes,axis=0)          
+        # for n in range(N):
+        #     r[n,y[n]] = 1
 
-        for k in range(K):
-            C[:,k] = np.mean(X[y==k,:],axis=0)
-            
+        # for k in range(K):
+        #     C[:,k] = np.mean(X[y==k,:],axis=0)
+        
         #################################################################
         # Test du critère d'arrêt l'évolution du criotère est inférieure 
         # au seuil en pour cent
 
-            
+        J[iteration] = (1/N)*np.sum(np.min(Normes[y, :],axis=0))
+        #################################################################
+        # test du critère d'arrêt l'évolution du critère est inférieure 
+        # au Seuil en pour cent
+        if abs(J[iteration-1]-J[iteration])/J[iteration-1] < Seuil:
+            break
+
     return C, y, J[:iteration+1]
 
 
