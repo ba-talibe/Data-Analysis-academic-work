@@ -116,8 +116,11 @@ def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp= Fal
             C[:,k] = np.mean(X[y==k,:],axis=0)
         
         J[iteration] = (1/N)*np.sum(np.min(Dist[y, :],axis=0))
-        variance_intra_clusters = (1 / N) * np.sum([np.sum(Dist[k, y == k]) for k in range(K)])
-        variance_explained[iteration]  = (1 - (J[iteration]/variance_intra_clusters))*100
+        Ik=np.array([np.sum((X[y==k]-C[:,k])**2)/len(X[y==k]) for k in range(len(C[0]))])
+        Iw=np.sum([(len(X[y==k])*Ik[k])/len(X) for k in range(k)])
+        Ib=np.sum([(len(X[y==k])/len(X))*(X.mean(axis=0)-C[:,k])**2 for k in range(k)])
+        It=Iw+Ib
+        variance_explained[iteration] =  100*(1-(Iw/It))
         #################################################################
         # test du critère d'arrêt l'évolution du critère est inférieure 
         # au Seuil en pour cent
@@ -183,7 +186,7 @@ if __name__ == '__main__':
     print(variance_explique)    
     plt.plot(variance_explique, 'o-')
     plt.xlabel('Iteration')
-    plt.ylabel('Variance expliquée (MSE)')
+    plt.ylabel('Variance expliquée (%)')
     plt.title('Evolution de la variance expliquée')
     plt.show()
         

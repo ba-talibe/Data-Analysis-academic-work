@@ -19,6 +19,7 @@ def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100):
     Normes=np.zeros((K,N))
 
     J=np.zeros(Max_iterations+1)
+    variance_explained = np.zeros(Max_iterations)
 
     # Initialisation des clusters
     # par tirage de K exemples, pour tomber dans les données     
@@ -60,20 +61,25 @@ def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100):
         #     r[n,y[n]] = 1
 
         # for k in range(K):
-        #     C[:,k] = np.mean(X[y==k,:],axis=0)
+        #     C[k,:] = np.mean(X[y==k,:],axis=0)
         
         #################################################################
         # Test du critère d'arrêt l'évolution du criotère est inférieure 
         # au seuil en pour cent
 
         J[iteration] = (1/N)*np.sum(np.min(Normes[y, :],axis=0))
+        Ik=np.array([np.sum((X[y==k]-C[k,:])**2)/len(X[y==k]) for k in range(C.shape[0])])
+        Iw=np.sum([(len(X[y==k])*Ik[k])/len(X) for k in range(k)])
+        Ib=np.sum([(len(X[y==k])/len(X))*(X.mean(axis=0)-C[k,:])**2 for k in range(k)])
+        It=Iw+Ib
+        variance_explained[iteration] =  100*(1-(Iw/It))
         #################################################################
         # test du critère d'arrêt l'évolution du critère est inférieure 
         # au Seuil en pour cent
         if abs(J[iteration-1]-J[iteration])/J[iteration-1] < Seuil:
             break
 
-    return C, y, J[:iteration+1]
+    return C, y, J[:iteration+1], variance_explained[:iteration]
 
 
 if __name__ == '__main__':
@@ -97,7 +103,7 @@ if __name__ == '__main__':
     plt.legend(scatterpoints=1)
 
 
-    Cluster, y, Critere = my_kmedoides(X,K)#,Visualisation = True)
+    Cluster, y, Critere, variance_explique = my_kmedoides(X,K)#,Visualisation = True)
     
     
     fig = plt.figure(3, figsize=(8, 6))
@@ -115,4 +121,12 @@ if __name__ == '__main__':
     plt.show()
     
     print("Critere:",Critere)
+
+    fig = plt.figure(figsize=(8, 6))
+    print(variance_explique)    
+    plt.plot(variance_explique, 'o-')
+    plt.xlabel('Iteration')
+    plt.ylabel('Variance expliquée (%)')
+    plt.title('Evolution de la variance expliquée')
+    plt.show()
         
