@@ -78,6 +78,7 @@ def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp= Fal
     iteration = 0        
     Dist=np.zeros((K,N)) # distance au carré entre les points et les centres
     J=np.zeros(Max_iterations+1)
+    variance_explained = np.zeros(Max_iterations)
     J[0] = 10000000
     r = np.zeros((N, K))
     
@@ -115,14 +116,15 @@ def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp= Fal
             C[:,k] = np.mean(X[y==k,:],axis=0)
         
         J[iteration] = (1/N)*np.sum(np.min(Dist[y, :],axis=0))
+        variance_intra_clusters = (1 / N) * np.sum([np.sum(Dist[k, y == k]) for k in range(K)])
+        variance_explained[iteration]  = (1 - (J[iteration]/variance_intra_clusters))*100
         #################################################################
         # test du critère d'arrêt l'évolution du critère est inférieure 
-        # au Seuil en pour ceent
+        # au Seuil en pour cent
         if abs(J[iteration-1]-J[iteration])/J[iteration-1] < Seuil:
             break
     
-    variance_clusters = (1/N)*np.sum(np.norm(X- np.mean(X,axis=0),axis=0))
-    variance_explained  = (1 - J[iteration]/variance_clusters)*100
+        
 
     if Visualisation:
         fig = plt.figure(1)
@@ -133,7 +135,7 @@ def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp= Fal
         plt.show()
 
     print("Nombre d'itérations :",iteration)
-    return C, y, J[1:iteration]
+    return C, y, J[1:iteration], variance_explained[:iteration]
 
 
 if __name__ == '__main__':
@@ -157,7 +159,7 @@ if __name__ == '__main__':
     plt.legend(scatterpoints=1)
 
 
-    Cluster, y, Critere = my_kmeans(iris.data,K,Visualisation = False)
+    Cluster, y, Critere, variance_explique = my_kmeans(iris.data,K,Visualisation = False)
     
 
     # Cluster, y, Critere = my_kmeans(iris.data,K,Visualisation = False)
@@ -175,5 +177,13 @@ if __name__ == '__main__':
     plt.xlabel('Iteration')
     plt.ylabel('Mean Squared Error (MSE)')
     plt.title('Evolution du critère')
+    plt.show()
+
+    fig = plt.figure(figsize=(8, 6))
+    print(variance_explique)    
+    plt.plot(variance_explique, 'o-')
+    plt.xlabel('Iteration')
+    plt.ylabel('Variance expliquée (MSE)')
+    plt.title('Evolution de la variance expliquée')
     plt.show()
         
