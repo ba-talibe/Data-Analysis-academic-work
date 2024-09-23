@@ -25,7 +25,7 @@ def initPlusPlus(X,K):
     liste_index = [index]
     C[:,0] = X[index,:]
     X = np.delete(X,index,0)
-    print("k=0 C[k]=",C[:,0],"index=",index)
+    #print("k=0 C[k]=",C[:,0],"index=",index)
     k=1
     
     while k < K:
@@ -72,7 +72,7 @@ def initPlusPlus(X,K):
 #  Tirer aléatoirement le centroïde �! parmi les points selon leur probabilité
 
 
-def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp= False):
+def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 1000, kpp= False):
     
     N,p = np.shape(X)
     iteration = 0        
@@ -130,11 +130,31 @@ def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp= Fal
         
 
     if Visualisation:
-        fig = plt.figure(1)
-        plt.plot(J[1:iteration], 'o-')
+        plt.subplots(1, 3, figsize=(19, 7))
+        plt.subplot(1, 3, 1)
+
+        # fig = plt.figure(3, figsize=(8, 6))
+        for k in range(K):
+            plt.plot(X[y==k, 0], X[y==k, 1], colors[k%n_colors]+'o', label=f"laberl : {k}")
+        plt.plot(C[0, :], C[1, :],'kx')
+        plt.title('K moyennes ('+str(K)+')')
+        plt.legend()
+        # plt.show()
+        
+        plt.subplot(1, 3, 2)
+        plt.plot(J[:iteration], 'o-')
         plt.xlabel('Iteration')
         plt.ylabel('Mean Squared Error (MSE)')
         plt.title('Evolution du critère')
+        # plt.show()
+
+        # fig = plt.figure(figsize=(8, 6))
+        # print(variance_explique[:iter])    
+        plt.subplot(1, 3, 3)
+        plt.plot(variance_explained[:iteration], 'o-')
+        plt.xlabel('Iteration')
+        plt.ylabel('Variance expliquée (%)')
+        plt.title('Evolution de la variance expliquée')
         plt.show()
 
     print("Nombre d'itérations :",iteration)
@@ -148,7 +168,7 @@ if __name__ == '__main__':
     iris = datasets.load_iris()
     X = iris.data[:, :2]  # we only take the first two features.
     y = iris.target
-    K= 4
+    K = 4
 
 
     fig = plt.figure(2, figsize=(8, 6))
@@ -162,31 +182,31 @@ if __name__ == '__main__':
     plt.legend(scatterpoints=1)
 
 
-    Cluster, y, Critere, variance_explique = my_kmeans(iris.data,K,Visualisation = False)
+    Cluster, y, Critere, variance_explique = my_kmeans(iris.data, K, Visualisation = True)
     
 
     # Cluster, y, Critere = my_kmeans(iris.data,K,Visualisation = False)
     
-    fig = plt.figure(3, figsize=(8, 6))
-    for k in range(K):
-        plt.plot(X[y==k, 0], X[y==k, 1], colors[k%n_colors]+'o')
-    plt.plot(Cluster[0, :], Cluster[1, :],'kx')
-    plt.title('K moyennes ('+str(K)+')')
-    plt.show()
+    # fig = plt.figure(3, figsize=(8, 6))
+    # for k in range(K):
+    #     plt.plot(X[y==k, 0], X[y==k, 1], colors[k%n_colors]+'o')
+    # plt.plot(Cluster[0, :], Cluster[1, :],'kx')
+    # plt.title('K moyennes ('+str(K)+')')
+    # plt.show()
     
-    fig = plt.figure(figsize=(8, 6))
-    print(Critere)
-    plt.plot(Critere, 'o-')
-    plt.xlabel('Iteration')
-    plt.ylabel('Mean Squared Error (MSE)')
-    plt.title('Evolution du critère')
-    plt.show()
+    # fig = plt.figure(figsize=(8, 6))
+    # print(Critere)
+    # plt.plot(Critere, 'o-')
+    # plt.xlabel('Iteration')
+    # plt.ylabel('Mean Squared Error (MSE)')
+    # plt.title('Evolution du critère')
+    # plt.show()
 
-    fig = plt.figure(figsize=(8, 6))
-    print(variance_explique)    
-    plt.plot(variance_explique, 'o-')
-    plt.xlabel('Iteration')
-    plt.ylabel('Variance expliquée (%)')
-    plt.title('Evolution de la variance expliquée')
-    plt.show()
+    # fig = plt.figure(figsize=(8, 6))
+    # print(variance_explique)    
+    # plt.plot(variance_explique, 'o-')
+    # plt.xlabel('Iteration')
+    # plt.ylabel('Variance expliquée (%)')
+    # plt.title('Evolution de la variance expliquée')
+    # plt.show()
         
