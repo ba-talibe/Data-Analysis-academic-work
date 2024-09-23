@@ -3,3 +3,5 @@
 *.csv
 *.gz
 .virtual_documents/*
+__pycache__/*
+*.pyc
