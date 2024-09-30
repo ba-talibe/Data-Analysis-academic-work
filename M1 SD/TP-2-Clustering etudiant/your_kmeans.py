@@ -29,7 +29,6 @@ def initPlusPlus(X,K):
     k=1
     
     while k < K:
-        
         # calcul des distances
         NN = X.shape[0]
         dist = np.zeros(NN)
@@ -39,16 +38,10 @@ def initPlusPlus(X,K):
             D = np.diag(D.T @ D)
 
             dist[n] = np.min(D)
-
-
-
         # calcul des probabilités
         proba = dist/np.sum(dist)
-        
-        
-        
-        # tirage aléatoire selon proba
 
+        # tirage aléatoire selon proba
         rand_val = generator.random((1))[0]
         intervals = np.cumsum(proba)
         index = 0
@@ -92,8 +85,6 @@ def my_kmeans(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 1000, kpp= Fa
         C = np.zeros((p,K))
         for k in range(K):
             C[:,k] = X[Index_init[k],:].T 
-        
-        
         
     while iteration < Max_iterations:
         iteration +=1

@@ -39,7 +39,6 @@ def RadialVisualization(X,target,target_names,feature_names, dataset_name="data"
         plt.plot(X1[target == i], X2[target == i], 'x', color=colors[i])
     
     plt.show()
-    pass
 
 if __name__ == '__main__':
 

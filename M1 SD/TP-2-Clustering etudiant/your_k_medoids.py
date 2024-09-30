@@ -8,11 +8,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 from sklearn import datasets
 import numpy as np
+from your_kmeans import initPlusPlus
 from numpy.linalg import norm
 
 colors =['r','b','g','c','m','o']
 n_colors = 6
-def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100):
+def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100, kpp=False):
     
     N,p = np.shape(X)
     iteration = 0        
@@ -23,15 +24,19 @@ def my_kmedoides(X,K,Visualisation=False,Seuil=0.001,Max_iterations = 100):
 
     # Initialisation des clusters
     # par tirage de K exemples, pour tomber dans les données     
-    Index_init = np.random.choice(N, K,replace = False)
-    C = np.zeros((K,p))
-    for k in range(K):
-        C[k,:] = X[Index_init[k],:]
+    if not kpp:
+        Index_init = np.random.choice(N, K,replace = False)
+        C = np.zeros((K,p))
+        for k in range(K):
+            C[k,:] = X[Index_init[k],:]
+    else:
+        C = initPlusPlus(X,K)
+        C = C.T
 
 
     while iteration < Max_iterations:
         iteration += 1
-        print("Iteration :",iteration)
+        # print("Iteration :",iteration)
         #################################################################
         #          affectation des données aux médoïde le plus proches
         for k in range(K):
@@ -101,24 +106,24 @@ if __name__ == '__main__':
 
 #########################################################
 #''' K means '''
-    iris = datasets.load_iris()
+    iris = datasets.load_breast_cancer()
     X = iris.data#[:, :2]  # we only take the first two features.
     y = iris.target
-    K= 3
+    K= 2
 
 
-    fig = plt.figure(2, figsize=(8, 6))
-    plt.clf()
-    plt.scatter(X[0:50, 0], X[0:50, 1], cmap=plt.cm.Set1,edgecolor='k',label=iris.target_names[0])
-    plt.scatter(X[50:100, 0], X[50:100, 1], cmap=plt.cm.Set1,edgecolor='k',label=iris.target_names[1])
-    plt.scatter(X[100:150, 0], X[100:150, 1], cmap=plt.cm.Set1,edgecolor='k',label=iris.target_names[2])
+    # fig = plt.figure(2, figsize=(8, 6))
+    # plt.clf()
+    # plt.scatter(X[0:50, 0], X[0:50, 1], cmap=plt.cm.Set1,edgecolor='k',label=iris.target_names[0])
+    # plt.scatter(X[50:100, 0], X[50:100, 1], cmap=plt.cm.Set1,edgecolor='k',label=iris.target_names[1])
+    # plt.scatter(X[100:150, 0], X[100:150, 1], cmap=plt.cm.Set1,edgecolor='k',label=iris.target_names[2])
     
-    plt.xlabel('Sepal length')
-    plt.ylabel('Sepal width')
-    plt.legend(scatterpoints=1)
+    # plt.xlabel('Sepal length')
+    # plt.ylabel('Sepal width')
+    # plt.legend(scatterpoints=1)
 
 
-    Cluster, y, Critere, variance_explique = my_kmedoides(X, K, Visualisation = True)
+    Cluster, y, Critere, variance_explique = my_kmedoides(X, K, Visualisation = True, kpp=True)
     
     
     # fig = plt.figure(3, figsize=(8, 6))
