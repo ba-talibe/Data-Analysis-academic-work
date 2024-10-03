@@ -240,12 +240,12 @@ if __name__ == '__main__':
     BIC = []
     AIC = []
 
-    for K in range(2, 2*K):
+    for KK in range(2, 8):
         P, Mean, Cov, LOGVRAIS = my_GMM_fit(X,K)
         y, LV = my_GMM_predict(X,K,P,Mean,Cov)
         
-        bic = K * (p**2 + p + 1) * np.log(N) - 2 * LV
-        aic = K * (p**2 + p + 1) * 2         - 2 * LV
+        bic = KK * (p**2 + p + 1) * np.log(N) - 2 * LV
+        aic = KK * (p**2 + p + 1) * 2         - 2 * LV
 
         BIC.append(bic)
         AIC.append(aic)
@@ -258,3 +258,4 @@ if __name__ == '__main__':
     plt.plot(range(2, 2*K), AIC, 'ro-', label='AIC K='+str(K_AIC))
     plt.plot(range(2, 2*K), BIC, 'bo-', label='BIC K='+str(K_BIC))
     plt.legend(loc='upper left')
+    plt.show()
