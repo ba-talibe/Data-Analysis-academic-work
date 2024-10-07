@@ -174,7 +174,7 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             print("itération =",iteration,"BREAK")
             break
     
-#         ###########################################################SyntaxError: unterminated string literal (detected at line 45)
+            ###########################################################SyntaxError: unterminated string literal (detected at line 45)
         for k in range(K):
             Nk[k]=np.sum(Proba_Clusters[k,:])
             New_Mean[k,:]=np.sum(X.T*Proba_Clusters[k,:],axis=1)/Nk[k]
@@ -182,7 +182,7 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
         for k in range(K):
             Res_gauche=(X-Mean[k,:]).T* Proba_Clusters[k,:]
             Res_droite=X-Mean[k,:]
-            New_Cov[k,:,:]=(Res_gauche@ Res_droite)*np.identity(p)/Nk[k]
+            New_Cov[k,:,:]=(Res_gauche@Res_droite)*np.identity(p)/Nk[k]
 #         # les proba des clusters
         New_P=Nk/N
 #       ##### compléter ici
@@ -241,8 +241,8 @@ if __name__ == '__main__':
     AIC = []
 
     for KK in range(2, 8):
-        P, Mean, Cov, LOGVRAIS = my_GMM_fit(X,K)
-        y, LV = my_GMM_predict(X,K,P,Mean,Cov)
+        P, Mean, Cov, LOGVRAIS = my_GMM_fit(X,KK)
+        y, LV = my_GMM_predict(X,KK,P,Mean,Cov)
         
         bic = KK * (p**2 + p + 1) * np.log(N) - 2 * LV
         aic = KK * (p**2 + p + 1) * 2         - 2 * LV
