@@ -126,17 +126,13 @@ def my_GMM_p_a_posteriori(X,K,P,Mean,Cov):
         LogDen=LogSumExp(Log_Vrais_Gauss)
         Proba_Clusters=np.exp(Log_Vrais_Gauss-LogDen)
         LogVrais=np.sum(LogDen)
-
-    
     return Proba_Clusters,LogVrais
 
 ###########################################################################
 def my_GMM_predict(X,K,P,Mean,Cov):
     
     Proba_Clusters, LogVrais = my_GMM_p_a_posteriori(X,K,P,Mean,Cov)
-    
     y = np.argmax(Proba_Clusters,axis=0)
-    
     return y,LogVrais
 
 ##########################################################################
@@ -173,7 +169,7 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             print("itération =",iteration,"BREAK")
             break
     
-#         ###########################################################SyntaxError: unterminated string literal (detected at line 45)
+        ###########################################################SyntaxError: unterminated string literal (detected at line 45)
         for k in range(K):
             Nk[k]=np.sum(Proba_Clusters[k,:])
             New_Mean[k,:]=np.sum(X.T*Proba_Clusters[k,:],axis=1)/Nk[k]
@@ -182,9 +178,9 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             Res_gauche=(X-Mean[k,:]).T* Proba_Clusters[k,:]
             Res_droite=X-Mean[k,:]
             New_Cov[k,:,:]=(Res_gauche@ Res_droite)*np.identity(p)/Nk[k]
-#         # les proba des clusters
+        # les proba des clusters
         New_P=Nk/N
-#       ##### compléter ici
+        ##### compléter ici     
         
         Mean = New_Mean
         P = New_P
@@ -195,14 +191,14 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             print("P = ",P)
             print("Mean = ",Mean)
             print("Cov = ",Cov)
-         
+        
     if Visualisation:
         fig = plt.figure(figsize=(8, 6))
         plt.plot(LOGVRAIS[1:iteration], 'o-')
         plt.xlabel('Iteration')
         plt.ylabel('Vraisemblance')
         plt.show()
-            
+        
     return P, Mean, Cov, LOGVRAIS[1:iteration]
 
 #############################################################################

@@ -60,7 +60,7 @@ def my_GMM_generate(P,Mean,Cov,N,Visualisation=False):
         plt.figure(figsize=(8,8))
         debut=0
         for k in range(K):
-            fin=debut-effectifs[k]
+            fin=debut+effectifs[k]
             plt.plot(X[debut:fin,0],X[debut:fin,1],colors[k]+'o',markersize=4,markeredgewidth=3)
             plt.plot(Mean[k,0],Mean[k,1],'kx',markersize=10,markeredgewidth=3)
             debut=fin
@@ -183,9 +183,9 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             Res_gauche=(X-Mean[k,:]).T* Proba_Clusters[k,:]
             Res_droite=X-Mean[k,:]
             New_Cov[k,:,:]=(Res_gauche@Res_droite)*np.identity(p)/Nk[k]
-#         # les proba des clusters
+        # les proba des clusters
         New_P=Nk/N
-#       ##### compléter ici
+        ##### compléter ici
         
         Mean = New_Mean
         P = New_P
@@ -208,7 +208,7 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
 
 #############################################################################
 if __name__ == '__main__':
-
+    import pprint
     ####################################################################
     #
     #              Génération de données multivariées Gaussiennes
@@ -221,6 +221,10 @@ if __name__ == '__main__':
     
     K,p = np.shape(MEAN)    
     N = 1000
+
+    for i in range(K):
+        pprint.pprint(MEAN[i])
+        pprint.pprint(COV[i])
 
     X,y = my_GMM_generate(PROB,MEAN,COV,N,Visualisation=True)
 
