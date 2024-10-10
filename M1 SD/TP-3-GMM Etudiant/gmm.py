@@ -55,11 +55,12 @@ def my_GMM_generate(P,Mean,Cov,N,Visualisation=False):
         Xk=np.random.multivariate_normal(Mean[k,:],Cov[k,:,:],effectifs[k])
         X=np.concatenate((X,Xk),axis=0)  
         y=np.concatenate((y,yk),axis=0)  
+
     if Visualisation: #on visualise les deux premières coordonnées 
         plt.figure(figsize=(8,8))
         debut=0
         for k in range(K):
-            fin=debut-effectifs[k]
+            fin=debut+effectifs[k]
             plt.plot(X[debut:fin,0],X[debut:fin,1],colors[k]+'o',markersize=4,markeredgewidth=3)
             plt.plot(Mean[k,0],Mean[k,1],'kx',markersize=10,markeredgewidth=3)
             debut=fin
@@ -126,13 +127,17 @@ def my_GMM_p_a_posteriori(X,K,P,Mean,Cov):
         LogDen=LogSumExp(Log_Vrais_Gauss)
         Proba_Clusters=np.exp(Log_Vrais_Gauss-LogDen)
         LogVrais=np.sum(LogDen)
+
+    
     return Proba_Clusters,LogVrais
 
 ###########################################################################
 def my_GMM_predict(X,K,P,Mean,Cov):
     
     Proba_Clusters, LogVrais = my_GMM_p_a_posteriori(X,K,P,Mean,Cov)
+    
     y = np.argmax(Proba_Clusters,axis=0)
+    
     return y,LogVrais
 
 ##########################################################################
@@ -169,7 +174,7 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             print("itération =",iteration,"BREAK")
             break
     
-        ###########################################################SyntaxError: unterminated string literal (detected at line 45)
+            ###########################################################SyntaxError: unterminated string literal (detected at line 45)
         for k in range(K):
             Nk[k]=np.sum(Proba_Clusters[k,:])
             New_Mean[k,:]=np.sum(X.T*Proba_Clusters[k,:],axis=1)/Nk[k]
@@ -177,10 +182,10 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
         for k in range(K):
             Res_gauche=(X-Mean[k,:]).T* Proba_Clusters[k,:]
             Res_droite=X-Mean[k,:]
-            New_Cov[k,:,:]=(Res_gauche@ Res_droite)*np.identity(p)/Nk[k]
+            New_Cov[k,:,:]=(Res_gauche@Res_droite)*np.identity(p)/Nk[k]
         # les proba des clusters
         New_P=Nk/N
-        ##### compléter ici     
+        ##### compléter ici
         
         Mean = New_Mean
         P = New_P
@@ -191,19 +196,40 @@ def my_GMM_fit(X,K,Visualisation=False,Seuil=0.0000001,Max_iterations = 100):
             print("P = ",P)
             print("Mean = ",Mean)
             print("Cov = ",Cov)
-        
+         
     if Visualisation:
         fig = plt.figure(figsize=(8, 6))
         plt.plot(LOGVRAIS[1:iteration], 'o-')
         plt.xlabel('Iteration')
         plt.ylabel('Vraisemblance')
         plt.show()
-        
+            
     return P, Mean, Cov, LOGVRAIS[1:iteration]
+
+
+def plot_decision_multi(X, predictor, sample = 300):
+    """Uses Matplotlib to plot and fill a region with 2 colors
+    corresponding to 2 classes.
+
+    Parameters
+    ----------
+    sample : int, optional
+        Number of samples on each feature (default is 300)
+    """
+
+    x1_min, x1_max = X[:, 0].min() -2, X[:, 0].max()+ 2
+    x2_min, x2_max = X[:, 1].min() -2, X[:, 1].max()+2
+    x1_list = np.linspace(x1_min, x1_max, sample)
+    x2_list = np.linspace(x2_min, x2_max, sample)
+    y_grid_pred = [[predictor (np.array([[x1,x2]]))[0] for x1 in x1_list] for x2 in x2_list] 
+    l = np.shape(np.unique(y_grid_pred))[0] - 1
+    plt.contourf(x1_list, x2_list, y_grid_pred, levels=l, colors=plt.rcParams['axes.prop_cycle'].by_key()['color'], alpha=0.35)
+    plt.xlim([x1_min, x1_max])
+    plt.ylim([x2_min, x2_max])
 
 #############################################################################
 if __name__ == '__main__':
-
+    import pprint
     ####################################################################
     #
     #              Génération de données multivariées Gaussiennes
@@ -217,19 +243,59 @@ if __name__ == '__main__':
     K,p = np.shape(MEAN)    
     N = 1000
 
-    X,y = my_GMM_generate(PROB,MEAN,COV,N,Visualisation=True)
+    for i in range(K):
+        pprint.pprint(MEAN[i])
+        pprint.pprint(COV[i])
 
-    P, Mean, Cov, LOGVRAIS = my_GMM_fit(X,K)
+    X,y_true = my_GMM_generate(PROB,MEAN,COV,N,Visualisation=True)
+
+
+    P, Mean, Cov, LOGVRAIS = my_GMM_fit(X,K, Visualisation=True)
 
     y, LV = my_GMM_predict(X,K,P,Mean,Cov)
     
-    plt.figure(figsize=(8,8))
+    plt.subplots(1, 2, figsize=(17, 8))
+    plt.subplot(1, 2, 1)
+    for k in range(K):
+        plt.plot(X[y_true==k,0],X[y_true==k,1],colors[k]+'o',markersize=4,markeredgewidth=3)
+        plt.plot(MEAN[k,0],MEAN[k,1],'kx',markersize=10,markeredgewidth=3)
+    plt.xlim(-10, 10)
+    plt.ylim(-10,10)
+    plot_decision_multi(X, lambda x: my_GMM_predict(x,K,P,Mean,Cov)[0])
+    plt.title("Données simulées")
+
+    plt.subplot(1, 2, 2)
     for k in range(K):
         plt.plot(X[y==k,0],X[y==k,1],colors[k]+'o',markersize=4,markeredgewidth=3)
         plt.plot(MEAN[k,0],MEAN[k,1],'kx',markersize=10,markeredgewidth=3)
     plt.xlim(-10, 10)
     plt.ylim(-10,10)
+    plot_decision_multi(X, lambda x: my_GMM_predict(x,K,P,Mean,Cov)[0])
+    plt.title("Données prédites")
     plt.show()
     
+    erreur = np.sum(y != y_true)*100/N
+    print("Erreur = ",erreur,"%")
 
+    BIC = []
+    AIC = []
 
+    for KK in range(2, 8):
+        P, Mean, Cov, LOGVRAIS = my_GMM_fit(X,KK)
+        y, LV = my_GMM_predict(X,KK,P,Mean,Cov)
+        
+        bic = KK * (p**2 + p + 1) * np.log(N) - 2 * LV
+        aic = KK * (p**2 + p + 1) * 2         - 2 * LV
+
+        BIC.append(bic)
+        AIC.append(aic)
+
+    K_AIC = AIC.index(min(AIC)) + 2
+    K_BIC = BIC.index(min(BIC)) + 2
+
+    plt.figure(figsize=(8,8))
+
+    plt.plot(range(2, 2*K), AIC, 'ro-', label='AIC K='+str(K_AIC))
+    plt.plot(range(2, 2*K), BIC, 'bo-', label='BIC K='+str(K_BIC))
+    plt.legend(loc='upper left')
+    plt.show()
