@@ -37,11 +37,13 @@ def etendre_cluster(X, y, Dist, Cluster, no_cluster, Voisins, Visite, eps, minpt
             Visite[v] = True
             if y[v] == -1:
                 y[v] = no_cluster
-                Cluster += [v]
+                Cluster.append(v)
 
             Voisins_v = EpsilonVoisinage(v,X,Dist,eps)
             if len(Voisins_v) >= minpts:
-                Voisins = list(set(Voisins) | set(Voisins_v))
+                for vv in Voisins_v:
+                    if vv not in Voisins:
+                        Voisins.append(vv)
 
     return Cluster, y, Visite
 
@@ -65,14 +67,15 @@ def my_DBSCAN(X, eps, minpts, Visualisation = False):
     
     for p in range(N):
         ######### VOTRE CODE ICI
-        Visite[p] = True
-        Voisins = EpsilonVoisinage(p,X,Dist,eps)
-        if len(Voisins) >= minpts:
-            no_cluster += 1
-            y[p] = no_cluster
-            Cluster = [p]
-            Cluster, y, Visite = etendre_cluster(X, y, Dist, Cluster, no_cluster, Voisins, Visite, eps, minpts)
-            Clusters.append(Cluster) 
+        if not Visite[p]:
+            Visite[p] = True
+            Voisins = EpsilonVoisinage(p,X,Dist,eps)
+            if len(Voisins) >= minpts:
+                no_cluster += 1
+                y[p] = no_cluster
+                Cluster = [p]
+                Cluster, y, Visite = etendre_cluster(X, y, Dist, Cluster, no_cluster, Voisins, Visite, eps, minpts)
+                Clusters.append(Cluster) 
 
     if Visualisation :
         print(len(Clusters),' clusters trouvés', no_cluster)

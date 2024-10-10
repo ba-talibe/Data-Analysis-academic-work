@@ -5,3 +5,4 @@
 .virtual_documents/*
 __pycache__/*
 *.pyc
+*.ignore.*
