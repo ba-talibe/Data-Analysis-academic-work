@@ -108,10 +108,7 @@ def estime_minpts(X, Dist, eps):
         NVoisins += [len(EpsilonVoisinage(p, X, Dist, eps))]
     return np.ceil(np.percentile(np.array(NVoisins, dtype=np.float64), 5))
 
-if __name__ == '__main__':
-
-#########################################################
-
+def plot_iris(iris):
     iris = datasets.load_iris()
     X = iris.data
     y = iris.target
@@ -125,34 +122,36 @@ if __name__ == '__main__':
     plt.ylabel('Sepal width')
     plt.legend(scatterpoints=1)
 
-    eps = 0.5
-    minpts = 5
-    
-    my_y = my_DBSCAN(X)
-    statistiques = np.unique(my_y,return_counts=True)
+def visualize_dbscan(X, y_pred, title="DBSCAN"):
+    statistiques = np.unique(y_pred,return_counts=True)
     K = len(statistiques[0])-(1 if -1 in statistiques[0] else 0)
-    Bruit = [p for p in range(len(my_y)) if my_y[p]==-1]
+    Bruit = [p for p in range(len(y_pred)) if y_pred[p]==-1]
     
     fig = plt.figure(figsize=(8, 6))
 
     for k in range(1,K+1):
-        plt.plot(X[my_y==k, 0], X[my_y==k, 1], colors[k%n_colors]+'o')
-    plt.plot(X[my_y==-1, 0], X[my_y==-1, 1], 'kv')
+        plt.plot(X[y_pred==k, 0], X[y_pred==k, 1], colors[k%n_colors]+'o')
+    plt.plot(X[y_pred==-1, 0], X[y_pred==-1, 1], 'kv')
 
-    plt.title('my_DBSCAN :'+str(K)+' clusters, '+str(len(Bruit))+' noise')
+    plt.title(f'{title}:'+str(K)+' clusters, '+str(len(Bruit))+' noise')
     plt.show()
+
+if __name__ == '__main__':
+
+#########################################################
+
+    iris = datasets.load_iris()
+    X = iris.data
+    y = iris.target
+
+    plot_iris(iris)
+
+    eps = 0.5
+    minpts = 5
+    
+    my_y = my_DBSCAN(X, eps, minpts, Visualisation=True)
+    visualize_dbscan(X, my_y, title="My DBSCAN")
 
     # comparaison avec DBSCAN de scikit learn
     yy = DBSCAN(eps=eps,min_samples=minpts).fit_predict(X)
-    statistiques = np.unique(yy,return_counts=True)
-    Noise = [p for p in range(len(yy)) if yy[p]==-1]
-    K = len(statistiques[0])-(1 if -1 in statistiques[0] else 0)
-    
-    print('yy len:',len(yy))
-    fig = plt.figure(figsize=(8, 6))
-    for k in range(K):
-        plt.plot(X[yy==k, 0], X[yy==k, 1], colors[(k+1)%n_colors]+'o')
-    plt.plot(X[yy==-1, 0], X[yy==-1, 1], 'kv')
-
-    plt.title('scikitlearn DBSCAN :'+str(K)+' clusters, '+str(len(Noise))+' noise')
-    plt.show()
+    visualize_dbscan(X, yy, title="scikit learn DBSCAN")
