@@ -50,7 +50,7 @@ def etendre_cluster(X, y, Dist, Cluster, no_cluster, Voisins, Visite, eps, minpt
 
 ##########################################################################
 #              MY DBSCAN
-def my_DBSCAN(X, eps, minpts, Visualisation = False):
+def my_DBSCAN(X, eps=None, minpts=None, Visualisation = False):
     N,pp =np.shape(X)
     no_cluster = 0
     
@@ -59,7 +59,13 @@ def my_DBSCAN(X, eps, minpts, Visualisation = False):
     for n in range(1,N):
         D = np.reshape(norm(X - X[n,:],axis=1),(N,1))
         Dist = np.concatenate((Dist,D),axis=1)
-                
+    
+    if eps is None:
+        eps = estime(Dist)
+    
+    if minpts is None:
+        minpts = estime_minpts(X, Dist, eps)
+
     Visite = [False for _ in range(N)]
     
     y = - np.ones(N)  # tableau des labels des données, initialisé bruit (-1)
@@ -88,6 +94,20 @@ def my_DBSCAN(X, eps, minpts, Visualisation = False):
 
     return y
 
+def estime(Dist):
+
+    N = np.shape(Dist)[0]
+    Diag =  np.eye(N)*100000
+    EPS = np.percentile(np.sort(Dist+Diag, axis=0), 95)
+    return EPS
+
+def estime_minpts(X, Dist, eps):
+    NVoisins = []
+    N, p = np.shape(X)
+    for p in range(N):
+        NVoisins += [len(EpsilonVoisinage(p, X, Dist, eps))]
+    return np.ceil(np.percentile(np.array(NVoisins, dtype=np.float64), 5))
+
 if __name__ == '__main__':
 
 #########################################################
@@ -108,7 +128,7 @@ if __name__ == '__main__':
     eps = 0.5
     minpts = 5
     
-    my_y = my_DBSCAN(X,eps,minpts)
+    my_y = my_DBSCAN(X)
     statistiques = np.unique(my_y,return_counts=True)
     K = len(statistiques[0])-(1 if -1 in statistiques[0] else 0)
     Bruit = [p for p in range(len(my_y)) if my_y[p]==-1]
