@@ -50,7 +50,7 @@ def etendre_cluster(X, y, Dist, Cluster, no_cluster, Voisins, Visite, eps, minpt
 
 ##########################################################################
 #              MY DBSCAN
-def my_DBSCAN(X, eps=None, minpts=None, Visualisation = False):
+def my_DBSCAN(X, eps=None, minpts=None, eps_percent=None, minpts_percent=None, Visualisation = False, verbose = False):
     N,pp =np.shape(X)
     no_cluster = 0
     
@@ -61,10 +61,11 @@ def my_DBSCAN(X, eps=None, minpts=None, Visualisation = False):
         Dist = np.concatenate((Dist,D),axis=1)
     
     if eps is None:
-        eps = estime(Dist)
+
+        eps = estime_eps(Dist) if eps_percent is None else estime_eps(Dist, eps_percent)
     
     if minpts is None:
-        minpts = estime_minpts(X, Dist, eps)
+        minpts = estime_minpts(X, Dist, eps) if minpts_percent is None else estime_minpts(X, Dist, eps, minpts_percent)
 
     Visite = [False for _ in range(N)]
     
@@ -83,7 +84,7 @@ def my_DBSCAN(X, eps=None, minpts=None, Visualisation = False):
                 Cluster, y, Visite = etendre_cluster(X, y, Dist, Cluster, no_cluster, Voisins, Visite, eps, minpts)
                 Clusters.append(Cluster) 
 
-    if Visualisation :
+    if verbose :
         print(len(Clusters),' clusters trouvés', no_cluster)
         print("Clusters =",Clusters)
         for cluster in Clusters:
@@ -94,19 +95,19 @@ def my_DBSCAN(X, eps=None, minpts=None, Visualisation = False):
 
     return y
 
-def estime(Dist):
+def estime_eps(Dist, percent=95):
 
     N = np.shape(Dist)[0]
     Diag =  np.eye(N)*np.max(Dist)*2
-    EPS = np.percentile(np.min(Dist+Diag, axis=0), 95)
+    EPS = np.percentile(np.min(Dist+Diag, axis=0), percent)
     return EPS
 
-def estime_minpts(X, Dist, eps):
+def estime_minpts(X, Dist, eps, percent=5):
     NVoisins = []
     N, p = np.shape(X)
     for p in range(N):
         NVoisins += [len(EpsilonVoisinage(p, X, Dist, eps))]
-    return np.ceil(np.percentile(np.array(NVoisins, dtype=np.float64), 5))
+    return np.ceil(np.percentile(np.array(NVoisins, dtype=np.float64), percent))
 
 def plot_iris(iris):
     iris = datasets.load_iris()
