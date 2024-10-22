@@ -97,8 +97,8 @@ def my_DBSCAN(X, eps=None, minpts=None, Visualisation = False):
 def estime(Dist):
 
     N = np.shape(Dist)[0]
-    Diag =  np.eye(N)*100000
-    EPS = np.percentile(np.sort(Dist+Diag, axis=0), 95)
+    Diag =  np.eye(N)*np.max(Dist)*2
+    EPS = np.percentile(np.min(Dist+Diag, axis=0), 95)
     return EPS
 
 def estime_minpts(X, Dist, eps):
@@ -149,7 +149,7 @@ if __name__ == '__main__':
     eps = 0.5
     minpts = 5
     
-    my_y = my_DBSCAN(X, eps, minpts, Visualisation=True)
+    my_y = my_DBSCAN(X, Visualisation=True)
     visualize_dbscan(X, my_y, title="My DBSCAN")
 
     # comparaison avec DBSCAN de scikit learn
