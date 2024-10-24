@@ -92,17 +92,21 @@ def my_DBSCAN(X, eps=None, minpts=None, eps_percent=None, minpts_percent=None, V
                        
         Bruit = [n for n in range(N) if y[n] == -1]
         print('effectif  bruit',len(Bruit))
+    
+    if Visualisation:
+        visualize_dbscan(X, y, title="My DBSCAN eps="+str(np.round(eps, 2))+", minpts="+str(minpts) + "\n")
 
     return y
 
 def estime_eps(Dist, percent=95):
-
+    # ajout d' un paramètre pour choisir le pourcentage
     N = np.shape(Dist)[0]
     Diag =  np.eye(N)*np.max(Dist)*2
     EPS = np.percentile(np.min(Dist+Diag, axis=0), percent)
     return EPS
 
 def estime_minpts(X, Dist, eps, percent=5):
+    # ajout d' un paramètre pour choisir le pourcentage
     NVoisins = []
     N, p = np.shape(X)
     for p in range(N):
@@ -134,7 +138,7 @@ def visualize_dbscan(X, y_pred, title="DBSCAN"):
         plt.plot(X[y_pred==k, 0], X[y_pred==k, 1], colors[k%n_colors]+'o')
     plt.plot(X[y_pred==-1, 0], X[y_pred==-1, 1], 'kv')
 
-    plt.title(f'{title}:'+str(K)+' clusters, '+str(len(Bruit))+' noise')
+    plt.title(f'{title}'+str(K)+' clusters, '+str(len(Bruit))+' noise')
     plt.show()
 
 if __name__ == '__main__':
@@ -151,8 +155,8 @@ if __name__ == '__main__':
     minpts = 5
     
     my_y = my_DBSCAN(X, Visualisation=True)
-    visualize_dbscan(X, my_y, title="My DBSCAN")
+    # visualize_dbscan(X, my_y, title="My DBSCAN")
 
     # comparaison avec DBSCAN de scikit learn
     yy = DBSCAN(eps=eps,min_samples=minpts).fit_predict(X)
-    visualize_dbscan(X, yy, title="scikit learn DBSCAN")
+    # visualize_dbscan(X, yy, title="scikit learn DBSCAN")
