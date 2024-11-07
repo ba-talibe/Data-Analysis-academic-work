@@ -124,9 +124,9 @@ def my_GMM_p_a_posteriori(X,K,P,Mean,Cov):
     for k in range(K):
         Log_Vrais_Gauss[k, :]=math.log(P[k])+my_G_LogVraisemblance(X,Mean[k,:],Cov[k,:,:])
 
-        LogDen=LogSumExp(Log_Vrais_Gauss)
-        Proba_Clusters=np.exp(Log_Vrais_Gauss-LogDen)
-        LogVrais=np.sum(LogDen)
+    LogDen=LogSumExp(Log_Vrais_Gauss)
+    Proba_Clusters=np.exp(Log_Vrais_Gauss-LogDen)
+    LogVrais=np.sum(LogDen)
 
     
     return Proba_Clusters,LogVrais
