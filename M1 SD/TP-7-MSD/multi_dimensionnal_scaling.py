@@ -39,48 +39,53 @@ def multi_dimendional_scalling(data, n_neighbors=50, n_components=2):
     ones = np.ones(m)
 
     # B = -.5*(1 - 1/n_neighbors)* (Id - 1/m*ones)@(D**2)@(Id - 1/m*ones)
-    B = -.5* (Id - 1/m*ones)@(D**2)@(Id - 1/m*ones)
+    B = -.5* (Id - (1/m)*ones)@(D**2)@(Id - (1/m)*ones)
 
     v, V = np.linalg.eig(B)
 
-    val_max, vec_max = TriVP(v,V)
-    Y = vec_max[:, :n_components]@np.diag(np.sqrt(val_max[:n_components]))
+    idx = np.argsort(v)[::-1]
+    val_max = v[idx]
+    vec_max = V[:, idx]
+    Y = vec_max[:, :n_components]@np.diag(val_max[:n_components]**(-.5))
     return Y
 
-def my_iso_map(data, n_components=2, n_neighbors=3):
+def plot_mds(Y, n_neighbors=39, n_components=2):
     """
-    This function takes a dataframe and returns a dataframe with n_components
-    columns that are the result of the isomap algorithm.
+    This function takes a dataframe and the labels of the data and plots the
+    data in 2D using the multi-dimensional scalling.
     """
-    kng = kneighbors_graph(data, n_neighbors=n_neighbors, mode='distance')
-  
-    D = shortest_path(kng, directed=True)
 
-    return D
-
-
-if __name__ == '__main__':
-    # Load the iris dataset
-    iris = datasets.load_iris()
-    X_iris = iris.data
-    y_iris = iris.target
-
-
-    Y = multi_dimendional_scalling(X_iris, n_neighbors=50, n_components=2)
     # Apply the multi-dimensional scalling
     plt.figure(figsize=(8, 8))
-    plt.scatter(Y[:, 0], Y[:, 1], c=y_iris, cmap=plt.cm.Set1,edgecolor='k')
+    plt.scatter(Y[:, 0], Y[:, 1], c=y_mnist, cmap=plt.cm.Set1,edgecolor='k')
     plt.xlabel('CP 1')
     plt.ylabel('CP 2')
     plt.title('myISO des données IRIS')
     plt.show()
 
 
-    X_iso = manifold.Isomap(n_neighbors=50, n_components=2).fit_transform(X_iris)
+    X_iso = manifold.Isomap(n_neighbors=39, n_components=2, path_method='D').fit_transform(X_wine)
 
     plt.figure(figsize=(8, 8))
-    plt.scatter(X_iso[:, 0], X_iso[:, 1], c=y_iris, cmap=plt.cm.Set1,edgecolor='k')
+    plt.scatter(X_iso[:, 0], X_iso[:, 1], c=y_mnist, cmap=plt.cm.Set1,edgecolor='k')
     plt.xlabel('CP 1')
     plt.ylabel('CP 2')
     plt.title('sklearn ISO des données IRIS')
     plt.show()
+
+
+if __name__ == '__main__':
+    # Load the iris dataset
+    iris = datasets.load_iris()
+    wine = datasets.load_wine()
+    X_wine = wine.data
+    y_wine = wine.target
+    X_iris = iris.data
+    y_iris = iris.target
+    mnist = datasets.load_digits()
+    X_mnist = mnist.data
+    y_mnist = mnist.target
+
+    # Apply the multi-dimensional scalling
+    Y = multi_dimendional_scalling(X_mnist, n_neighbors=50, n_components=2)
+    plot_mds(Y, n_neighbors=39, n_components=2)
